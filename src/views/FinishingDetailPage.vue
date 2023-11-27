@@ -1,15 +1,56 @@
 <template>
-    <div class="d-flex justify-content-between align-items-center p-2 bg-warning">
-        <p class="fw-bold mb-0">{{ dataset.sid }} | {{ dataset.quantity }}</p>
-        <router-link to="/finishing-department">
-            <i class="bi bi-x fs-3"></i>
+    <div class="d-flex align-items-center p-2 " style="background-color: #25C297;">
+        <router-link to="/finishing-department" class="text-white">
+            <i class="bi bi-chevron-left fs-4"></i>
         </router-link>
+        <div class="flex-fill" data-bs-toggle="collapse" data-bs-target="#productDetail" aria-expanded="false"
+            aria-controls="productDetail">
+            <div class="d-flex justify-content-between align-items-center text-white p-2">
+                <p class="fw-bold mb-0">{{ dataset.sid }} | {{ dataset.quantity }}</p>
+                <i class="bi bi-chevron-down text-white px-2"></i>
+            </div>
+        </div>
+    </div>
+    <div class="collapse" id="productDetail">
+        <div class="d-flex justify-content-center">
+            <img v-if="dataset.product" :src="dataset.product.colors[0].image" class=""
+                style="height: 250px;object-fit: fill;">
+        </div>
+
+        <div class="mb-2 border rounded-bottom">
+            <div class="flex-fill d-flex text-muted bg-light border-bottom">
+                <div class="px-2 py-1  border-end" style="min-width: 110px; width: fit-content;">Name</div>
+                <div v-if="dataset.product" class="px-2 py-1 text-capitalize ">{{ dataset.product.name }}</div>
+            </div>
+            <div class="flex-fill d-flex text-muted bg-light border-bottom">
+                <div class="px-2 py-1  border-end" style="min-width: 110px; width: fit-content;">Search Tags</div>
+                <div v-if="dataset.product" class="px-2 py-1 text-capitalize ">{{ dataset.product.tags }}</div>
+            </div>
+            <div v-if="dataset.product" class="flex-fill d-flex text-muted bg-light
+             border-bottom">
+                <div class="px-2 py-1  border-end" style="min-width: 110px; width: fit-content;">Color</div>
+                <div class="px-2 py-1 text-capitalize ">{{ displayedColors }}</div>
+            </div>
+            <div v-if="dataset.product" class="flex-fill d-flex text-muted bg-light border-bottom">
+                <div class="px-2 py-1  border-end" style="min-width: 110px; width: fit-content;">Size</div>
+                <div class="px-2 py-1 text-capitalize ">{{ displayedSizes }}</div>
+            </div>
+            <div class="flex-fill d-flex text-muted bg-light border-bottom">
+                <div class="px-2 py-1  border-end" style="min-width: 110px; width: fit-content;">Created On</div>
+                <div v-if="dataset.purchase_order" class="px-2 py-1 text-capitalize ">{{ dataset.purchase_order.created_at
+                }}</div>
+            </div>
+            <div class="flex-fill d-flex bg-light text-muted border-bottom">
+                <div class="px-2 py-1 border-end" style="min-width: 110px; width: fit-content;">Expected On</div>
+                <div v-if="dataset.purchase_order" class="px-2 py-1 text-capitalize ">{{ dataset.purchase_order.expected_at
+                }}</div>
+            </div>
+        </div>
     </div>
     <div class="container mt-2" style="padding-bottom: 80px;">
-
         <div class="d-flex flex-column justify-content-center align-items-center text-success">
             <!-- <i class="bi bi-hand-thumbs-up display-1 p-4" :class="{ 'bounce': completedTime }"></i> -->
-            <i class="bi bi-hand-thumbs-up display-1 p-4" ></i>
+            <i class="bi bi-hand-thumbs-up display-1 p-4"></i>
             <p v-if="completedTime" class="mb-0">Order is completed on {{ formatDate(completedTime) }}</p>
             <p class="text-center mb-0 fw-bold text-success my-2">Time Duration</p>
             <p v-if="dataset.time_difference >= 0" class="text-center text-success">Early Delivery By {{
@@ -20,18 +61,20 @@
         </div>
 
 
-        <button class="btn btn-warning d-flex justify-content-between w-100 rounded-0 py-2 my-1" type="button"
+        <button class="btn btn-light border d-flex justify-content-between w-100 rounded-0 py-2 my-1" type="button"
             data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false"
             aria-controls="collapseExample"> <span>Order
                 Chats</span><span v-if="dataset.message">{{ dataset.message.length }}</span>
         </button>
         <div class="collapse" id="collapseExample">
-            <div class="card card-body rounded-0 border-warning">
+            <div class="card card-body rounded-0 border-light bg-light">
                 <div v-for="(message, index) in dataset.message" :key="index">
-                    <div class="message mt-3 mb-2  w-100 border-bottom">
-                        <div class="message-content border w-100 bg-light"
+                    <div class="message mt-3 mb-2  w-100">
+                        <div class="message-content border w-100 bg-white"
                             style="word-wrap: break-word; padding: 10px !important; border-radius: 8px; border-top-right-radius: 15px; border-bottom-left-radius: 15px; border-bottom-right-radius: 0px !important; ">
-                            <small class="fw-bold text-primary">@ {{ message.username }}</small>
+                            <small>
+                                <small class="text-primary">@ {{ message.username }}</small>
+                            </small>
                             <p class="mb-0">
                                 <strong>{{ message.title }}</strong>: {{ message.body }}
                             </p>
@@ -43,9 +86,13 @@
         </div>
 
 
-        <button class="btn btn-warning w-100 rounded-0 text-start my-1" type="button" data-bs-toggle="collapse"
-            data-bs-target="#orderSummary" aria-expanded="false" aria-controls="collapseExample">
-            Show Order Summary
+        <button class="d-flex justify-content-between btn btn-light border w-100 rounded-0 text-start my-1" @click="toggleOrder"
+            type="button" data-bs-toggle="collapse" data-bs-target="#orderSummary" aria-expanded="false"
+            aria-controls="collapseExample">
+            <span> Show Order Summary</span>
+            <span>
+                <i :class="iconClassOrder"></i>
+            </span>
         </button>
 
         <div class="collapse" id="orderSummary">
@@ -139,9 +186,13 @@
             </div>
         </div>
 
-        <button class="btn btn-warning w-100 rounded-0 text-start my-1" type="button" data-bs-toggle="collapse"
-            data-bs-target="#orderExtra" aria-expanded="false" aria-controls="collapseExample">
-            Loss / Exccess Quantities
+        <button class="d-flex justify-content-between btn btn-light border w-100 rounded-0 text-start my-1" @click="toggle"
+            type="button" data-bs-toggle="collapse" data-bs-target="#orderExtra" aria-expanded="false"
+            aria-controls="collapseExample">
+            <span> Loss / Exccess Quantities</span>
+            <span>
+                <i :class="iconClass"></i>
+            </span>
         </button>
         <!-- <p class="p-2 text-center mb-0 fw-bold bg-light my-2">Extra Details</p> -->
         <div class="collapse" id="orderExtra">
@@ -179,7 +230,6 @@
                 <p class="fw-bold text-center mb-0">{{ dataset.loss_quantity }} pcs</p>
             </div>
         </div>
-
     </div>
 </template> 
 
@@ -191,11 +241,13 @@ export default {
         return {
             dataset: {},
             completedTime: null,
+            isExpanded: false,
+            isExpandedOrder: false,
         }
     },
     mounted() {
         this.purchaseId = this.$route.params.purchaseId;
-        axios.get('http://192.168.1.133:8001/api/internal/purchases/' + this.purchaseId)
+        axios.get('http://192.168.1.133:8001/api/purchases/' + this.purchaseId)
             .then(response => {
                 if (response.data.status === 'ok') {
                     this.dataset = response.data.data;
@@ -215,12 +267,37 @@ export default {
         skuCount() {
             return this.dataset.product.colors ? this.dataset.product.colors.length * this.dataset.product.sizes.length : 0;
         },
+        displayedColors() {
+            if (this.dataset && this.dataset.product && this.dataset.product.colors) {
+                return this.dataset.product.colors.map(color => color.name).join(', ');
+            }
+            return '';
+        },
+        displayedSizes() {
+            if (this.dataset && this.dataset.product && this.dataset.product.sizes) {
+                return this.dataset.product.sizes.map(size => size.name).join(',');
+            }
+            return '';
+        },
+        iconClass() {
+            return this.isExpanded ? "bi bi-chevron-up" : "bi bi-chevron-down";
+        },
+        iconClassOrder() {
+            return this.isExpandedOrder ? "bi bi-chevron-up" : "bi bi-chevron-down";
+        },
     },
     methods: {
         formatDate(dateString) {
             const options = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
             return new Date(dateString).toLocaleDateString('en-US', options);
         },
+        toggle() {
+            this.isExpanded = !this.isExpanded;
+        },
+        toggleOrder() {
+            this.isExpandedOrder = !this.isExpandedOrder;
+        },
+        
     },
 
 }
@@ -229,12 +306,18 @@ export default {
 /* Add the CSS animation and class here */
 @keyframes bounce {
 
-    0%,20%,50%,80%,100% {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
         transform: translateY(0);
     }
+
     40% {
         transform: translateY(-30px);
     }
+
     60% {
         transform: translateY(-15px);
     }

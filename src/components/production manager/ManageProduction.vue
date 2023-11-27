@@ -1,27 +1,32 @@
 <template>
     <div class="my-3">
-        <p class="text-center fw-bold fs-5">Enter Final Cutting Quantity</p>
+        <p class="text-center fs-5 bill"><span>~ Final Cutting Qty ~</span></p>
 
+        <div class="d-flex justify-content-between p-2 rounded my-2 top-brand">
+            <h5 class="mb-0">Fabric Procured</h5>
+            <p class="d-flex gap-2 fw-bold mb-0"> {{ purchased ? purchased.length : 0 }}
+                <i class="bi bi-info-circle" data-bs-toggle="modal" data-bs-target="#fabricCount"></i>
+            </p>
+        </div>
         <table v-if="this.quantities" class="table table-responsive">
-            <thead class="table-secondary">
+            <thead class="table-light">
                 <tr>
-                    <th scope="col">
+                    <th scope="col" class="table-secondary">
                         <div class="d-flex flex-column align-items-center">
                             <p class="m-0">{{ skuCount }}</p>
                             <p class="m-0" style="font-size: 12px;">SKU</p>
                         </div>
                     </th>
-                    <th scope="col" class="text-center" v-for="(size, index) in dataset.sizes" :key="index">
+                    <th scope="col" class="text-center table-secondary" v-for="(size, index) in dataset.sizes" :key="index">
                         <div class="fw-bold">
                             <p class="">{{ size.name }}</p>
                         </div>
                     </th>
-                    <th class="table-dark">Fabric Quantity</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(color, colorIndex) in dataset.colors" :key="colorIndex">
-                    <td class="table-secondary">
+                    <td class="table-secondary position-sticky">
                         <img :src="color.image" class="rounded-circle" style="width: 38px; height: 38px; object-fit: cover;"
                             alt="">
                     </td>
@@ -29,73 +34,125 @@
                         <input type="number" class="form-control text-center"
                             v-model="quantities[`${color.sid}_${size.sid}`]">
                     </td>
-                    <td class="table-dark">
-                        {{ saleOrderColoredFabricQuantity(color.sid) }} mtr
-                    </td>
+                    <!-- <td class="table-secondary text-center">
+                        {{ purchased ? purchased.length : 0 }}
+                        <i class="bi bi-info-circle" data-bs-toggle="modal" data-bs-target="#fabricCount"></i>
+                    </td> -->
                 </tr>
-                <tr class="table-secondary">
-                    <th>Qty</th>
+
+
+                <!-- Modal -->
+                <div class="modal fade" id="fabricCount" tabindex="-1" aria-labelledby="fabricCountLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog" style="background-color: #28CC9E;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="fabricCountLabel">Fabric Count</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div v-for="(so, soIndex) in purchased" :key="soIndex" class="">
+                                    <div v-if="so.stock_id"
+                                        class="d-flex justify-content-between align-items-center border py-3 p-2 text-dark bg-light my-2 w-100 rounded-top"
+                                        data-bs-toggle="collapse" :data-bs-target="'#fabric' + soIndex"
+                                        aria-expanded="false" :aria-controls="'fabric' + soIndex"
+                                        style="background-color: #28CC9E;" @click="toggle">
+                                        <span>{{ so.stock_id.name }} #{{ so.sid }}</span>
+                                        <span>
+                                            <i :class="iconClass"></i>
+                                        </span>
+                                    </div>
+                                    <div class="collapse show my-2" :id="'fabric' + soIndex">
+                                        <div class="d-flex justify-content-between mb-2 px-2">
+                                            <p class="mb-0 fw-bold">Color</p>
+                                            <p class="mb-0 fw-bold">Quantity</p>
+                                            <p class="mb-0 fw-bold">Unit</p>
+                                        </div>
+                                        <div v-for="(color, colorIndex) in so.items" :key="colorIndex"
+                                            class="d-flex gap-3 m-2">
+                                            <!-- <div class="rounded-circle " style="width: 45px; height: 35px;"
+                                                :style="'background-color :' + color.color">
+                                            </div> -->
+                                            <img :src="color.image" class="rounded-circle" style="width: 45px; height: 45px; object-fit: fill;">
+                                            <input type="number" class="form-control form-control-sm border-0 text-center"
+                                                v-model="color.quantity" readonly>
+                                            <span>{{ so.stock_id.unit }}</span>
+                                        </div>
+                                        <div class="d-flex gap-2 justify-content-between p-2 border-top">
+                                            <p>Total</p>
+                                            <p>{{ calculateTotal(so.items) }}</p>
+                                            <!-- <p>{{ calculateTotal(so.items).toFixed(2) }}</p> -->
+                                            <span>{{ so.stock_id.unit }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <tr class="table-light">
+                    <th class="table-secondary">Qty</th>
                     <td class="text-center" v-for="(size, sizeindex) in  dataset.sizes" :key="sizeindex">
                         {{ calculateSizesTotal(sizeindex) }}
                     </td>
-                    <td class="table-dark" v-for="(po, poIndex) in purchased" :key="poIndex">
+                    <!-- <td class="table-secondary" v-for="(po, poIndex) in purchased" :key="poIndex">
                         {{ po.quantity }} mtr
-                    </td>
+                    </td> -->
                 </tr>
             </tbody>
         </table>
 
-        <div class="container mb-3">
-
-            <div class="d-flex justify-content-between mx-3 py-2 px-4 border" style="background-color: #e8e8e8;">
-                <p class="mb-0">Purchase Order Qty</p>
-                <p class="fw-bold text-center mb-0">{{ originalPoQuantity }} pcs</p>
-            </div>
-
-            <div class="d-flex justify-content-between mx-3 py-2 px-4 border" style="background-color: #e8e8e8;">
-                <p class="mb-0">Actual Prepared Qty</p>
-                <p class="fw-bold text-center mb-0">{{ calculateFinalQty }} pcs</p>
-            </div>
-
+        <div class="mb-3">
             <div class="form-floating my-3">
-                <input type="date" class="form-control" id="floatingDate" v-model="form.exp_date">
-                <label for="floatingDate">Invoice Date</label>
+                <input type="text" class="form-control" id="floatingInvoice" placeholder="" :value="originalPoQuantity"
+                    readonly>
+                <label for="floatingInvoice">Purchase Order Qty</label>
             </div>
             <div class="form-floating my-3">
-                <input type="text" class="form-control" id="floatingInvoice" v-model="form.invoice_no">
-                <label for="floatingInvoice">Invoice No</label>
+                <input type="text" class="form-control" id="floatingInvoice" placeholder="" :value="calculateFinalQty"
+                    readonly>
+                <label for="floatingInvoice">Actual Prepared Qty</label>
             </div>
-
-            <div class="form-floating my-3">
-                <textarea class="form-control" placeholder="Enter Message Here" id="floatingMessage"
-                    v-model="form.message"></textarea>
-                <label for="floatingMessage">Message</label>
-            </div>
-
-           
-            <div class="alert alert-warning">
-                Your job is to figure out how much we can make by matching the fabric color quantity that we have with what
-                the
-                brand
-                ordered in terms of color and size.
-            </div>
-
-
-            <button v-if="!dataset.purchased" class="btn btn-danger w-100" @click="sendForm()">Create
-                Purchase</button>
+            <form @submit.prevent="sendForm()">
+                <div class="form-floating my-3">
+                    <input type="date" class="form-control" id="floatingDate" v-model="form.exp_date" required>
+                    <label for="floatingDate">Invoice Date</label>
+                </div>
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="floatingInvoice" v-model="form.invoice_no" required>
+                    <label for="floatingInvoice">Invoice No</label>
+                </div>
+                <div class="form-floating my-3">
+                    <textarea class="form-control" placeholder="Enter Message Here" id="floatingMessage"
+                        v-model="form.message" required></textarea>
+                    <label for="floatingMessage">Message</label>
+                </div>
+                <div class="alert alert-warning">
+                    Your job is to figure out how much we can make by matching the fabric color quantity that we have with
+                    what
+                    the
+                    brand
+                    ordered in terms of color and size.
+                </div>
+                <button v-if="!dataset.purchased && !hideButton" class="btn w-100 top-brand" :disabled="buttonDisabled">Create
+                    Sale</button>
+            </form>
         </div>
     </div>
 </template>
   
 <script>
 import axios from 'axios';
-
+import sweetAlert from '@/mixins/sweetAlert';
 export default {
     props: ['dataset'],
+    mixins: [sweetAlert],
     data() {
         return {
             jobworkId: '',
-            // Form to Create Purchase
             form: {
                 assign: null,
                 exp_date: '',
@@ -133,7 +190,10 @@ export default {
                     icon: 'bi bi-chat-dots'
                 },
             ],
-            messages: []
+            messages: [],
+            originalPoQuantity: null,
+            buttonDisabled: false,
+            hideButton : false,
         }
     },
     mounted() {
@@ -146,7 +206,7 @@ export default {
             console.error('Error fetching data:', error);
         });
 
-        axios.get('http://192.168.1.133:8001/api/internal/purchaseorders/message/' + this.jobworkId)
+        axios.get('http://192.168.1.133:8001/api/purchaseorders/message/' + this.jobworkId)
             .then(res => {
                 // Convert the response data to a JSON string and log it
                 console.log('API Response:', JSON.stringify(res.data));
@@ -162,14 +222,17 @@ export default {
             handler(newDataset) {
                 if (newDataset && newDataset.quantities) {
                     this.quantities = newDataset.quantities;
+
+                    // Set the originalPoQuantity when dataset changes
+                    this.originalPoQuantity = this.calculateOriginalPoQuantity(newDataset);
                 }
             },
         },
     },
     computed: {
-        originalPoQuantity() {
-            return localStorage.getItem('po_quantity');
-        },
+        // originalPoQuantity() {
+        //     return localStorage.getItem('po_quantity');
+        // },
         skuCount() {
             return this.dataset.colors ? this.dataset.colors.length * this.dataset.sizes.length : 0;
         },
@@ -222,8 +285,30 @@ export default {
         },
     },
     methods: {
+        showSuccessAlert() {
+            this.showSweetAlert('Yay', 'Your Sale has been created successfully');
+        },
+        showErrorAlert() {
+            this.showSweetError('Oops', 'Something went wrong');
+        },
+        calculateTotal(items) {
+            return items.reduce((total, color) => total + parseFloat(color.quantity), 0);
+        },
+        calculateOriginalPoQuantity(dataset) {
+            // Calculate and return the initial originalPoQuantity based on the dataset
+            let originalQty = 0;
+            if (dataset.colors && dataset.sizes && dataset.quantities) {
+                dataset.colors.forEach(color => {
+                    dataset.sizes.forEach(size => {
+                        const key = `${color.sid}_${size.sid}`;
+                        originalQty += dataset.quantities[key] || 0;
+                    });
+                });
+            }
+            return originalQty;
+        },
         sendForm() {
-
+            this.buttonDisabled = true;
             if (!this.quantities) {
                 alert('wait');
             }
@@ -238,41 +323,46 @@ export default {
                     const quantityObject = {};
                     quantityObject[key] = this.quantities[key] || 0; // Use 0 if the quantity is undefined
 
-                    quantitiesArray.push(quantityObject);
+                    // quantitiesArray.push(quantityObject);
+                    quantitiesArray.unshift(quantityObject);
                 });
             });
-           
+
             const data = {
                 quantities: JSON.stringify(quantitiesArray),
                 purchase_order_sid: this.dataset.sid,
                 invoice_date: this.form.exp_date,
-                message:  JSON.stringify({
+                message: JSON.stringify({
                     title: 'first',
                     body: this.form.message,
                 }),
                 invoice_no: this.form.invoice_no,
 
             };
-            // this.messages.push(message);
-
-            axios.post('http://192.168.1.133:8001/api/internal/purchases', data).then(() => {
-                this.quantities = [];
-                this.form.invoice_no = '';
-                this.form.exp_date = '';
-                this.$router.push('/production-department');
-            });
-
-
-
-            // axios.put('http://192.168.1.133:8001/api/internal/jobworkorders/' + this.jobworkId, {
-            //     message: JSON.stringify(message)
-            // })
-            //     .then(response => {
-            //         console.log('Response from the API:', response.data);
-            //     })
-            //     .catch(error => {
-            //         console.error(error);
-            //     });
+            axios.post('http://192.168.1.133:8001/api/purchases', data)
+                .then((response) => {
+                    if (response.data.status === 'ok') {
+                        this.quantities = [];
+                        this.form.invoice_no = '';
+                        this.form.exp_date = '';
+                        // this.$router.push('/production-department');
+                        this.showSuccessAlert()
+                    } else if (response.data.status === 'error') {
+                        this.showErrorAlert()
+                        alert(response.data.message)
+                    } else {
+                        this.showErrorAlert()
+                        alert('Something went wrong! Please try again')
+                    }
+                })
+                .catch((error) => {
+                    console.error('error creating purchase', error)
+                    this.showErrorAlert()
+                })
+                .finally(() => {
+                    // this.buttonDisabled = false
+                    this.hideButton = true
+                })
 
         },
         saleOrderColoredFabricQuantity(colorSid) {
@@ -291,4 +381,3 @@ export default {
     },
 }
 </script>
-  

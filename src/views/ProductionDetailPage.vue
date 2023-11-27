@@ -1,60 +1,52 @@
 <template>
-    <div style="padding-bottom:80px ;">
-        <nav class="navbar border-bottom navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid justify-content-start ">
-                <router-link to="/production-department" class="ps-1 pe-3 text-dark">
-                    <i class="bi bi-chevron-left"></i>
-                </router-link>
-                <div class="navbar-brand">{{ this.purchaseId }}</div>
+    <nav class="navbar border-bottom navbar-expand-lg" style="background-color: #25C297;">
+        <div class="container-fluid">
+            <router-link to="/production-department" class="ps-1 pe-3 text-white">
+                <i class="bi bi-chevron-left"></i>
+            </router-link>
+            <div class="navbar-brand flex-fill d-flex align-items-center gap-2 text-white">
+                <span>Production</span>
+                <i class="bi bi-arrow-right"></i>
+                <small>{{ this.purchaseId }}</small>
             </div>
-        </nav>
-
-        <button class="btn w-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample"
-            aria-expanded="false" aria-controls="collapseExample">
+        </div>
+    </nav>
+    <div class="container" style="padding-bottom:80px ;">
+        <p class="my-3 text-center fs-5 bill"><span>~ Catalog ~</span></p>
+        <div class="card">
             <div class="row g-1">
-                <div class="col-4">
+                <div class="col-4 col-md-3 d-flex align-items-center justify-content-start p-2">
                     <img v-if="dataset.product" :src="dataset.product.colors[0].image" style="object-fit: cover"
                         class="w-100">
                 </div>
-                <div class="col-8">
-                    <table class="table table-sm my-2">
+                <div class="col-8 col-md-9">
+                    <div v-if="dataset.product" class="text-start mt-2">
+                        <p class="mb-0">{{ dataset.product.id }}</p>
+                    </div>
+                    <div v-if="dataset.product" class="text-start">
+                        <p class="ss mb-0">{{ dataset.product.name }} Long Gathered Sheer Cami Dress</p>
+                    </div>
+                    <!-- <table class="table table-sm my-2">
                         <tbody>
                             <tr>
-                                <td class="table-secondary w-25">Name</td>
+                                <td class="table-warning w-25">Name</td>
                                 <td class="text-start">Value</td>
                             </tr>
                             <tr>
-                                <td class="table-secondary w-25">Name</td>
+                                <td class="table-warning w-25">Name</td>
                                 <td class="text-start">Value</td>
                             </tr>
                             <tr>
-                                <td class="table-secondary w-25">Name</td>
+                                <td class="table-warning w-25">Name</td>
                                 <td class="text-start">Value</td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table> -->
                 </div>
             </div>
-        </button>
-
-        <div class="collapse" id="collapseExample">
-            <img v-if="dataset.product" :src="dataset.product.colors[0].image" style="width:100%; object-fit: fill;"
-                class="rounded-0 p-2">
-            <table class="table table-bordered  table-hover ">
-                <tbody>
-                    <tr>
-                        <th scope="row">Name</th>
-                        <td class="text-muted w-50">{{ dataset.name }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Fc / Piece</th>
-                        <td class="text-muted">{{ dataset.fc }}</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
 
-        <table v-if="this.dataset.quantities" class="table table-responsive">
+        <table v-if="this.dataset.quantities" class="table table-responsive mt-3">
             <thead class="table-secondary">
                 <tr>
                     <th scope="col">
@@ -90,59 +82,65 @@
             </tbody>
         </table>
 
-        <div class="container">
-            <div>
-                <div class="mt-3">
-                    <div class="d-flex align-items-center">
-                        <div class="border p-2 py-3 ps-4 rounded-top  text-white w-100" style="background-color: #F48B29 ;"
-                            data-bs-toggle="collapse" data-bs-target="#collapseExampleNew" aria-expanded="false"
-                            aria-controls="collapseExampleNew">
-                            Transaction
-                        </div>
-                    </div>
-                    <div class="collapse show bg-white p-2" id="collapseExampleNew">
-                        <div v-for="(ss, index) in dataset.message" :key="index" :class="ss.type">
-                            <div class="message mt-3 mb-2 d-flex flex-column"
-                                style="width: calc(100% - 40px) !important; margin-left:auto; margin-right: 0;">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-person fs-4 border rounded-circle me-2"
-                                        style="padding: 5px 10px !important;"></i>
-                                    <div class="message-content border w-100"
-                                        style="background-color: #F48B29;word-wrap: break-word; padding: 10px !important; border-radius: 8px; border-top-right-radius: 15px; border-bottom-left-radius: 15px; border-bottom-right-radius: 0px !important; color: white;">
-                                        <p class="m0">
-                                            <strong>{{ ss.title }}</strong>: {{ ss.body }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="text-end text-muted" style="font-size: 10px;">{{ ss.time }}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="border bg-white">
-                    <div class="container pb-2 ">
-                        <div class=" d-flex bg-light p-2 align-items-center">
-                            <input v-model="body" type="text" class="form-control" placeholder="Type your message..."
-                                required />
-                            <div @click="sendMessage" class="ms-2 "><i class="bi bi-telegram fs-1   p-3"
-                                    style="color: #F48B29;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row g-2">
-                <button v-if="dataset.status === 'cutting'" class="btn btn-warning w-100"
-                    @click="updateStatus">Stiching</button>
-                <button v-if="dataset.status === 'production'" class="btn btn-warning w-100"
-                    @click="updateStatus">Finishing</button>
-                <button v-if="dataset.status === 'packing'" class="btn btn-warning w-100"
-                    @click="updateStatus">Packing</button>
-                <button v-if="dataset.status === 'ready'" class="btn btn-primary w-100">Issued To Brand App</button>
-                <button v-if="dataset.status === 'completed'" class="btn btn-primary w-100">Order Completed</button>
-            </div>
+        <div class="d-flex justify-content-between bg-light p-2 px-3 mb-2">
+            <p class="fw-bold mb-0">Total Quantity</p>
+            <p class="fw-bold mb-0">{{ calculateFinalQty }} pcs</p>
         </div>
+
+        <div class="d-flex justify-content-between gap-2 mt-3 mb-5">
+            <button v-if="dataset.status === 'cutting'" class="btn  w-50 top-brand" @click="updateStatus"
+                :disabled="buttonDisabled">Stiching</button>
+            <button v-if="dataset.status === 'cutting'" class="btn top-brand w-50" @click="updateStatus"
+                :disabled="buttonDisabled">Jobwork
+                Out</button>
+            <button v-if="dataset.status === 'production'" class="btn top-brand w-50" disabled @click="updateStatus">Jobwork
+                In</button>
+            <button v-if="dataset.status === 'production'" class="btn top-brand w-50" @click="updateStatus"
+                :disabled="buttonDisabled">Finishing</button>
+            <!-- <button v-if="dataset.status === 'packing'" class="btn btn-dark" @click="updateStatus">Packing</button> -->
+            <button v-if="dataset.status === 'ready'" class="btn top-brand w-100" disabled>Issued To Brand App</button>
+            <button v-if="dataset.status === 'completed'" class="btn top-brand w-100" disabled>Order Completed</button>
+        </div>
+
+        <production-chat :dataset="dataset"></production-chat>
+
+        <!-- <div>
+            <div class="mt-3">
+                <div class="d-flex align-items-center">
+                    <div class="border p-2 py-3 ps-4 rounded-top  text-white w-100" style="background-color: #F48B29 ;"
+                        data-bs-toggle="collapse" data-bs-target="#collapseExampleNew" aria-expanded="false"
+                        aria-controls="collapseExampleNew">
+                        Chat
+                    </div>
+                </div>
+                <div class="collapse show p-2 border bg-light" id="collapseExampleNew">
+                    <div v-for="(message, index) in dataset.message" :key="index">
+                        <div class="message mt-3 mb-2  w-100 ">
+                            <div class="message-content border w-100 bg-white"
+                                style="word-wrap: break-word; padding: 10px !important; border-radius: 8px; border-top-right-radius: 15px; border-bottom-left-radius: 15px; border-bottom-right-radius: 0px !important; ">
+                                <small>
+                                    <small class="text-primary">@ {{ message.username }}</small>
+                                </small>
+                                <p class="mb-0">
+                                    <strong>{{ message.title }}</strong>: {{ message.body }}
+                                </p>
+                            </div>
+                            <div class="text-end text-muted" style="font-size: 10px;">{{ formatMessageTime(message.time) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="pb-2 ">
+                <div class=" d-flex bg-light p-2 align-items-center">
+                    <input v-model="body" type="text" class="form-control" placeholder="Type your message..." required />
+                    <div @click="sendMessage" class="ms-2 "><i class="bi bi-telegram fs-1   p-3"
+                            style="color: #F48B29;"></i>
+                    </div>
+                </div>
+            </div>
+        </div> -->
 
 
     </div>
@@ -150,72 +148,83 @@
 
 <script>
 import axios from 'axios';
+import pusherApi from '@/mixins/pusherApi';
+import ProductionChat from '@/components/ProductionChat.vue';
+import sweetAlert from '@/mixins/sweetAlert';
 
 export default {
+    mixins: [pusherApi, sweetAlert],
     data() {
         return {
-            dataset: {},
+            // dataset: {},
             purchaseId: '',
             messages: [],
             message: '',
             chats: {},
             actionName: [],
             body: '',
-            chatMessage: []
+            chatMessage: [],
+            buttonDisabled: false,
 
         };
     },
     created() {
         this.purchaseId = this.$route.params.purchaseId;
-        axios.get('http://192.168.1.133:8001/api/internal/purchases/' + this.purchaseId)
-            .then(response => {
-                if (response.data.status === 'ok') {
-                    this.dataset = response.data.data;
-                } else if (response.data.status === 'error') {
-                    alert(response.data.message)
-                } else {
-                    alert('Something went wrong! Please try again')
-                }
-            })
-            .catch((error) => { console.error('error getting data', error) })
+        this.connect('fetchPurchase', this.purchaseId);
+        this.$store.dispatch('fetchPurchase', this.purchaseId);
     },
     computed: {
         skuCount() {
             return this.dataset.product.colors ? this.dataset.product.colors.length * this.dataset.product.sizes.length : 0;
         },
-
+        dataset() {
+            return this.$store.getters.purchase;
+        },
         calculateFinalQty() {
             // Calculate the gross total quantity across all sizes and colors
             let totalQty = 0;
-
-            if (this.dataset.product.colors && this.dataset.product.sizes && this.quantities) {
-                this.dataset.product.colors.forEach(color => {
-                    this.dataset.product.sizes.forEach(size => {
-                        const key = `${color.sid}_${size.sid}`;
-                        totalQty += this.dataset.quantities[key] || 0;
+            if (this.dataset.product) {
+                if (this.dataset.product.colors && this.dataset.product.sizes && this.dataset.quantities) {
+                    this.dataset.product.colors.forEach(color => {
+                        this.dataset.product.sizes.forEach(size => {
+                            const key = `${color.sid}_${size.sid}`;
+                            totalQty += this.dataset.quantities[key] || 0;
+                        });
                     });
-                });
+                }
             }
-
             return totalQty;
         },
     },
     methods: {
+        showSuccessAlert() {
+            this.showSweetAlert('Yay', 'Moved to next department successfully');
+        },
+        showErrorAlert() {
+            this.showSweetError('Oops', 'Something went wrong');
+        },
         calculateSizesTotal(sizeIndex) {
-
             const size = this.dataset.product.sizes[sizeIndex];
             let total = 0;
-
             // Loop through colors to calculate the total for the given size
             for (const color of this.dataset.product.colors) {
                 const key = `${color.sid}_${size.sid}`;
                 total += this.dataset.quantities[key] || 0;
             }
-
             return total;
-
+        },
+        formatMessageTime(time) {
+            const options = {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            const formattedTime = new Date(time).toLocaleDateString('en-US', options);
+            return formattedTime;
         },
         updateStatus() {
+            this.buttonDisabled = true;
             // Create an array to hold the quantities data
             const quantitiesArray = [];
             // Iterate over colors and sizes to build the quantities array
@@ -225,23 +234,29 @@ export default {
                     // Create an object with the color and size combination
                     const quantityObject = {};
                     quantityObject[key] = this.dataset.quantities[key] || 0; // Use 0 if the quantity is undefined
-
                     quantitiesArray.push(quantityObject);
                 });
             });
-            // const sendmessage = JSON.stringify({
-            //     title: 'first',
-            //     body: this.form.message, w-100
-            // });
-            axios.put('http://192.168.1.133:8001/api/internal/purchases/' + this.purchaseId, {
+            axios.put('http://192.168.1.133:8001/api/purchases/' + this.purchaseId, {
                 status: 'next',
                 quantities: JSON.stringify(quantitiesArray),
-                // message: sendmessage,
             }).then(response => {
-                if (response.success) {
-                    this.$router.push('/finishing-department')
+                if (response.data.status === 'ok') {
+                    this.showSuccessAlert()
+                } else if (response.data.status === 'error') {
+                    this.showErrorAlert()
+                    alert(response.data.message)
+                } else {
+                    this.showErrorAlert()
+                    alert('Something went wrong! Please try again')
                 }
+            }).catch((error) => {
+                console.error('error creating purchase', error)
+                this.showErrorAlert()
             })
+                .finally(() => {
+                    // this.buttonDisabled = false
+                });
         },
         sendMessage() {
             if (this.body.trim() !== '') {
@@ -252,19 +267,13 @@ export default {
                 this.messages.push(message);
                 this.actionName = '';
                 this.body = '';
-
-                axios.put('http://192.168.1.133:8001/api/internal/purchases/' + this.purchaseId, {
+                axios.put('http://192.168.1.133:8001/api/purchases/' + this.purchaseId, {
                     message: JSON.stringify(message)
-                })
-                    .then(response => {
-                        console.log('Response from the API:', response.data);
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
+                });
             }
         },
-    }
+    },
+    components: { ProductionChat }
 }
 </script>
 <style scoped>

@@ -1,9 +1,9 @@
 <template>
     <div v-if="Object.keys(pos).length">
         <div v-for="(po, poIndex) in pos" :key="poIndex">
-            <div v-if="!po.purchased && po.procured" class="list-group list-group-flush border-bottom">
-                <router-link class="text-decoration-none" :to="'/ptocPage/' + po.sid">
-                    <div class="list-group-item d-flex align-items-center">
+            <div v-if="!po.purchased && po.procured" class="px-3 py-2 border-bottom">
+                <router-link class="text-decoration-none text-dark" :to="'/ptocPage/' + po.sid">
+                    <div class="d-flex align-items-center">
                         <img :src="po.colors[0].image" class="rounded-circle"
                             style="height:60px;width:60px; object-fit: fill;">
                         <div class="d-flex flex-fill flex-column ms-3">
@@ -19,38 +19,22 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 import NoOrder from '@/components/NoOrder.vue';
-
+import pusherApi from '@/mixins/pusherApi';
 export default {
     name: "CuttingPage",
+    mixins: [pusherApi],
+    created() {
+        this.connect('fetchpurchaseOrders')
+    },
     mounted() {
-        axios.get('http://192.168.1.133:8001/api/internal/purchaseorders?status=po_completed')
-            .then(response => {
-            if (response.data.status === 'ok') {
-                this.pos = response.data.data;
-            }
-            else if (response.data.status === 'error') {
-                alert(response.data.message);
-            }
-            else {
-                alert('Something went wrong! Please try again');
-            }
-        })
-            .catch((error) => { console.error('error', error); });
+        this.$store.dispatch('fetchpurchaseOrders')
     },
-    data() {
-        return {
-            pos: []
-        };
-    },
-    methods: {
-        acceptOrder() {
-            this.$store.dispatch('acceptPurchaseOrder', {
-                poId: this.po.sid,
-                poIndex: this.poIndex
-            });
-        },
+    computed: {
+        pos() {
+            return this.$store.getters.getpurchaseOrders
+        }
     },
     components: { NoOrder }
 }

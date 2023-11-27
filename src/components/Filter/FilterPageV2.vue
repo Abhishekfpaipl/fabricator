@@ -20,11 +20,6 @@
                     aria-controls="offcanvasExampleOne">
                     <i class="bi bi-arrow-down-up"></i>
                 </div>
-                <!-- <RouterLink to="/users/create" class="text-dark">
-                    <div class=" mx-1 border border-primary  btn btn-outline-primary">
-                        <i class="bi bi-plus-lg " type="button"></i>
-                    </div>
-                </RouterLink> -->
             </div>
         </div>
         <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel"
@@ -102,12 +97,12 @@
                     <option value="2">Manager</option>
                     <option value="3">Manager</option>
                 </select>
-                <select class="form-select py-3 mb-3" aria-label="Default select example">
+                <!-- <select class="form-select py-3 mb-3" aria-label="Default select example">
                     <option selected>Select Status</option>
                     <option value="1">New</option>
                     <option value="2">Running</option>
                     <option value="3">Completed</option>
-                </select>
+                </select> -->
             </div>
         </div>
 
@@ -148,30 +143,10 @@ export default {
                 { text: 'By Rate', selected: false },
                 { text: 'By Post', selected: false },
                 { text: 'By Department', selected: false }
-            ],
-            isScrollingDown: false,
-            prevScrollPos: window.pageYOffset,
-            suppliers: [
-                { id: 1, name: 'Supplier 1 Himanshu Bakshi' },
-                { id: 2, name: 'Supplier 2 Prince Jain' },
-                { id: 3, name: 'Supplier 3 Ashish Agarwal' },
-                { id: 4, name: 'All Suppliers' },
-            ]
+            ],  
         }
     },
-    methods: {
-        selectColor(index) {
-            if (this.isSelected(index)) {
-                const selectedIndex = this.selectedIndexes.indexOf(index);
-                this.selectedIndexes.splice(selectedIndex, 1);
-            } else {
-                this.selectedIndexes.push(index);
-            }
-        },
-        isSelected(index) {
-            return this.selectedIndexes.includes(index);
-        },
-
+    methods: {  
         paragraphColor(paragraph) {
             return paragraph.selected ? 'black' : 'gray';
         },
@@ -182,17 +157,6 @@ export default {
                 } else {
                     paragraph.selected = false;
                 }
-            }
-        },
-    },
-    computed: {
-        selectedColorNames() {
-            if (this.selectedIndexes.length > 0) {
-                return this.selectedIndexes.map(
-                    (index) => this.colors[index]
-                ).join(", ");
-            } else {
-                return "No color selected";
             }
         },
     },

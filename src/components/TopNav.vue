@@ -1,7 +1,10 @@
 <template>
-    <nav class="navbar bg-body-tertiary shadow">
+    <nav class="navbar top-brand border-bottom">
         <div class="container-fluid">
-            <span class="navbar-brand">{{ pageTitle }}</span>
+            <span class="navbar-brand text-white">{{ pageTitle }}</span>
+            <router-link to="/profile" class="text-dark">
+                <i class="bi bi-person-fill text-white fs-5"></i>
+            </router-link>
         </div>
     </nav>
 </template>

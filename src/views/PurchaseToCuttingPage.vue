@@ -1,61 +1,51 @@
 <template>
-    <div style="padding-bottom: 80px;">
-
-        <nav class="navbar border-bottom navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid justify-content-start ">
-                <router-link to="/cutting-department" class="ps-1 pe-3 text-dark">
-                    <i class="bi bi-chevron-left"></i>
-                </router-link>
-                <div class="navbar-brand">{{ this.jobworkId }}</div>
+    <nav class="navbar border-bottom navbar-expand-lg" style="background-color: #25C297;">
+        <div class="container-fluid">
+            <router-link to="/cutting-department" class="ps-1 pe-3 text-white">
+                <i class="bi bi-chevron-left"></i>
+            </router-link>
+            <div class="navbar-brand flex-fill d-flex align-items-center gap-2 text-white">
+                <span>Cutting</span>
+                <i class="bi bi-arrow-right"></i>
+                <small>{{ this.jobworkId }}</small>
             </div>
-        </nav>
-
-        <button class="btn w-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample"
-            aria-expanded="false" aria-controls="collapseExample">
+        </div>
+    </nav>
+    <div class="container" style="padding-bottom: 80px;">
+        <p class="my-3 text-center fs-5 bill"><span>~ Catalog ~</span></p>
+        <div class="card">
             <div class="row g-1">
-                <div class="col-4">
+                <div class="col-4 col-md-3 d-flex align-items-center justify-content-start p-2">
                     <img v-if="dataSet.colors" :src="dataSet.colors[0].image" style="object-fit: cover" class="w-100">
                 </div>
-                <div class="col-8">
-                    <table class="table table-sm my-2">
+                <div class="col-8 col-md-9">
+                    <div class="text-start mt-2">
+                        <!-- <p class="mb-0">Name</p> -->
+                        <p class="mb-0">{{ dataSet.product_id }}</p>
+                    </div>
+                    <div class="text-start">
+                        <p class="ss mb-0">{{ dataSet.name }} Long Gathered Sheer Cami Dress</p>
+                        <!-- <p class="mb-0">Tags</p> -->
+                        <!-- <p class="ss mb-0">{{ dataSet.tags }}</p> -->
+                    </div>
+                    <!-- <table class="table table-sm my-2">
                         <tbody>
-                            <tr>
-                                <td class="table-secondary w-25">Name</td>
-                                <td class="text-start">Value</td>
+                            <tr  class="border-white">
+                                <td class="w-25">Name</td>
+                                <td class="text-start ss">{{ dataSet.name }} Long Gathered Sheer Cami Dress</td>
                             </tr>
-                            <tr>
-                                <td class="table-secondary w-25">Name</td>
-                                <td class="text-start">Value</td>
-                            </tr>
-                            <tr>
-                                <td class="table-secondary w-25">Name</td>
-                                <td class="text-start">Value</td>
+                            <tr class="border-white">
+                                <td class="w-25">Tags</td>
+                                <td class="text-start break ss">{{ dataSet.tags }}</td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table> -->
                 </div>
             </div>
-        </button>
-
-        <div class="collapse" id="collapseExample">
-            <img v-if="dataSet.colors" :src="dataSet.colors[0].image" style="width:100%; object-fit: fill;"
-                class="rounded-0 p-2">
-            <table class="table table-bordered  table-hover ">
-                <tbody>
-                    <tr>
-                        <th scope="row">Name</th>
-                        <td class="text-muted w-50">{{ dataSet.name }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Fc / Piece</th>
-                        <td class="text-muted">{{ dataSet.fc }}</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
 
         <ManageProduction :dataset="dataSet"></ManageProduction>
- 
+
     </div>
 </template>
 
@@ -79,15 +69,14 @@ export default {
     },
     created() {
         this.jobworkId = this.$route.params.jobworkId;
-        axios.get('http://192.168.1.133:8001/api/internal/purchaseorders/' + this.jobworkId).then(response => {
+        axios.get('http://192.168.1.133:8001/api/purchaseorders/' + this.jobworkId).then(response => {
             this.dataSet = response.data.data;
             localStorage.setItem('po_quantity', response.data.data.quantity);
         })
     },
     mounted() {
-        axios.get('http://192.168.1.133:8001/api/internal/purchaseorders/message/' + this.jobworkId)
+        axios.get('http://192.168.1.133:8001/api/purchaseorders/message/' + this.jobworkId)
             .then(res => {
-                // Convert the response data to a JSON string and log it
                 console.log('API Response:', JSON.stringify(res.data));
 
                 this.chats = res.data;
@@ -98,3 +87,16 @@ export default {
     },
 }
 </script>
+<style scoped> 
+.ss {
+     display: -webkit-box;
+     -webkit-line-clamp: 3;
+     -webkit-box-orient: vertical;
+     overflow: hidden;
+     text-overflow: ellipsis;
+ }
+
+ .break {
+     word-break: break-all;
+ }
+</style>

@@ -1,80 +1,71 @@
 <template>
-    <div v-if="Object.keys(pos).length">
-        <p class="p-2 text-center fw-bold mb-0">Pending Orders</p>
-        <div v-for="(po, poIndex) in pos" :key="poIndex">
-            <!-- <div v-if="po.status === 'pending'" class="list-group list-group-flush border-bottom"> -->
-            <div v-if="!po.procured" class="list-group list-group-flush border-bottom">
-                <router-link class="text-decoration-none" :to="'/fabric-procurement/' + po.sid">
-                    <!-- <router-link  class="text-decoration-none" to="/fabric-procurement/"> -->
-                    <div class="list-group-item d-flex align-items-center">
-                        <img :src="po.colors[0].image" class="rounded-circle"
-                            style="height:60px;width:60px; object-fit: fill;">
-                        <div class="d-flex flex-fill flex-column ms-3">
-                            <span class="fw-bold">#{{ po.sid }}</span>
-                            <span>Order Qty : {{ po.quantity }}</span>
+    <div style="padding-bottom: 80px;">
+        <!-- <div v-if="Object.keys(fabPos).length"> -->
+        <p class="p-2 text-center mb-0 bg-light border-bottom bill"><span class="fs-5">~ Material PO ~</span></p>
+        <div v-if="Object.keys(notProcuredPo).length">
+            <div v-for="(po, poIndex) in notProcuredPo" :key="poIndex">
+                <div v-if="!po.procured" class="px-3 py-2 border-bottom">
+                    <router-link class="text-decoration-none text-dark" :to="'/fabric-procurement/' + po.sid">
+                        <div class="d-flex align-items-center">
+                            <img :src="po.colors[0].image" class="rounded-circle"
+                                style="height:60px;width:60px; object-fit: fill;">
+                            <div class="d-flex flex-fill flex-column ms-3">
+                                <span class="fw-bold">#{{ po.sid }}</span>
+                                <span>Order Qty : {{ po.quantity }}</span>
+                            </div>
                         </div>
-                    </div>
-                </router-link>
+                    </router-link>
+                </div>
             </div>
         </div>
+        <no-order v-else></no-order>
 
-        <p class="p-2 text-center fw-bold mb-0">Fabric Received</p>
-        <div v-for="(po, poIndex) in pos" :key="poIndex">
-            <!-- <div v-if="po.status === 'pending'" class="list-group list-group-flush border-bottom"> -->
-            <div v-if="po.procured" class="list-group list-group-flush border-bottom">
-                <router-link class="text-decoration-none" :to="'/fabric-procurement/' + po.sid">
-                    <!-- <router-link  class="text-decoration-none" to="/fabric-procurement/"> -->
-                    <div class="list-group-item d-flex align-items-center">
-                        <img :src="po.colors[0].image" class="rounded-circle"
-                            style="height:60px;width:60px; object-fit: fill;">
-                        <div class="d-flex flex-fill flex-column ms-3">
-                            <span class="fw-bold">#{{ po.sid }}</span>
-                            <span>Order Qty : {{ po.quantity }}</span>
+        <p class="p-2 text-center mb-0 bg-light border-bottom bill"><span class="fs-5">~ Material Purchases ~</span></p>
+        <div v-if="Object.keys(procuredPo).length">
+            <div v-for="(po, poIndex) in procuredPo" :key="poIndex">
+                <div v-if="po.procured" class="px-3 py-2 border-bottom">
+                    <router-link class="text-decoration-none text-dark" :to="'/fabric-procurement/' + po.sid">
+                        <div class="d-flex align-items-center">
+                            <img :src="po.colors[0].image" class="rounded-circle"
+                                style="height:60px;width:60px; object-fit: fill;">
+                            <div class="d-flex flex-fill flex-column ms-3">
+                                <span class="fw-bold">#{{ po.sid }}</span>
+                                <span>Order Qty : {{ po.quantity }}</span>
+                            </div>
                         </div>
-                    </div>
-                </router-link>
+                    </router-link>
+                </div>
             </div>
         </div>
-
+        <no-order v-else></no-order>
+        <!-- </div>
+        <no-order v-else></no-order> -->
     </div>
-    <no-order v-else></no-order>
 </template>
 
 <script>
-import axios from 'axios';
 import NoOrder from '@/components/NoOrder.vue';
-
+import pusherApi from '@/mixins/pusherApi';
 export default {
     name: "FabricPage",
-    data() {
-        return {
-            pos: []
-        };
+    mixins: [pusherApi],
+    created() {
+        this.connect('fetchFabricPurchaseOrder')
     },
-    mounted() {
-        // this.$store.dispatch('fetchJobWorks')
-        axios.get('http://192.168.1.133:8001/api/internal/purchaseorders?status=po_completed')
-            .then(response => {
-                if (response.data.status === 'ok') {
-                    this.pos = response.data.data;
-                }
-                else if (response.data.status === 'error') {
-                    alert(response.data.message);
-                }
-                else {
-                    alert('Something went wrong! Please try again');
-                }
-            })
-            .catch((error) => { console.error('error getting data', error); });
-    },
-    methods: {
-        acceptOrder() {
-            this.$store.dispatch('acceptPurchaseOrder', {
-                poId: this.po.sid,
-                poIndex: this.poIndex
-            });
+    components: { NoOrder },
+    computed: {
+        fabPos() {
+            return this.$store.getters.getFabricPurchaseOrder
+        },
+        notProcuredPo() {
+            return this.fabPos.filter(po => po.procured === 0 && po.status === 'issued');
+        },
+        procuredPo() {
+            return this.fabPos.filter(po => po.procured === 1 && po.status ==='completed');
         },
     },
-    components: { NoOrder }
+    mounted() {
+        this.$store.dispatch('fetchFabricPurchaseOrder')
+    },
 }
 </script>

@@ -5,22 +5,27 @@ export default createStore({
   state: {
     jobHistory: [],
     finishingHistory: [],
-    jobWorks: [],
+    purchaseOrders: [],
+    fabricPurchaseOrder: [],
     saleOrder: [],
     purchaseOrder: [],
     activePo: {},
-    purchases: []
+    purchases: [],
+    purchase: []
   },
   getters: {
-    getjobWorks(state) {
-      return state.jobWorks
+    getpurchaseOrders(state) {
+      return state.purchaseOrders
     },
-    getNewJobWorks(state){
-      return state.jobWorks.filter(jw => jw.status === 'po_issued')
+    getFabricPurchaseOrder(state) {
+      return state.fabricPurchaseOrder
     },
-    getCompletedJobWorks(state){
-      return state.jobWorks.filter(jw => jw.status === 'po_completed')
-    },
+    // getNewpurchaseOrders(state) {
+    //   return state.purchaseOrders.filter(po => po.status === 'po_issued')
+    // },
+    // getCompletedpurchaseOrders(state) {
+    //   return state.purchaseOrders.filter(po => po.status === 'po_completed')
+    // },
     getSaleOrder(state) {
       return state.saleOrder
     },
@@ -30,7 +35,8 @@ export default createStore({
     getActivePo(state) {
       return state.activePo
     },
-    purchases: state => state.purchases
+    purchases: state => state.purchases,
+    purchase: state => state.purchase
   },
   mutations: {
     stockIn(state, data) {
@@ -38,7 +44,10 @@ export default createStore({
       state.issues[index].jobs.push(data.qty);
     },
     Jobwork(state, data) {
-      state.jobWorks = data
+      state.purchaseOrders = data
+    },
+    FabricPurchaseOrder(state, data) {
+      state.fabricPurchaseOrder = data
     },
     saleOrder(state, data) {
       state.saleOrder = data
@@ -50,21 +59,25 @@ export default createStore({
       state.purchaseOrder.push(newData)
     },
     updateOrderStatus(state, data) {
-      state.jobWorks[data.index] = data.response
+      state.purchaseOrders[data.index] = data.response
     },
     updateSaleOrderStatus(state, data) {
       state.saleOrder[data.index] = data.response
     },
     setPurchases(state, data) {
       state.purchases = data
-    }
+    },
+    setPurchase(state, data) {
+      state.purchase = data
+    },
+
   },
   actions: {
     finishigNewJob({ commit }, data) {
       commit('finishigNewJob', data)
     },
-    fetchJobWorks({ commit }) {
-      axios.get('http://192.168.1.133:8001/api/internal/purchaseorders')
+    fetchpurchaseOrders({ commit }) {
+      axios.get('http://192.168.1.133:8001/api/purchaseorders')
         .then(response => {
           if (response.data.status === 'ok') {
             commit('Jobwork', response.data.data)
@@ -74,7 +87,22 @@ export default createStore({
             alert('Something went wrong! Please try again');
           }
         })
-        .catch((error) => { console.error('fetchJobWorks:', error) })
+        .catch((error) => { console.error('fetchpurchaseOrders:', error) })
+    },
+    fetchFabricPurchaseOrder({ commit }) {
+      axios.get('http://192.168.1.133:8001/api/purchaseorders')
+        .then(response => {
+          if (response.data.status === 'ok') {
+            commit('FabricPurchaseOrder', response.data.data)
+          }
+          else if (response.data.status === 'error') {
+            alert(response.data.message);
+          }
+          else {
+            alert('Something went wrong! Please try again');
+          }
+        })
+        .catch((error) => { console.error('error getting data', error); });
     },
     fetchSaleOrder({ commit }, data) {
       axios.get('http://192.168.1.133:8003/api/saleorder/' + data.jwoId + '/' + data.fabId)
@@ -92,24 +120,31 @@ export default createStore({
         .catch((error) => { console.error('fetchSaleOrder', error) })
     },
     fetchPurchaseOrder({ commit }) {
-      axios.get('http://192.168.1.133:8001/api/internal/purchases')
+      axios.get('http://192.168.1.133:8001/api/purchases')
         .then(response => {
-          if (response.data.status === 'ok') { 
+          if (response.data.status === 'ok') {
             commit('purchaseOrder', response.data.data)
           } else if (response.data.status === 'error') {
             alert(response.data.message)
-          } else{
+          } else {
             alert('Something went wrong! Please try again')
           }
         })
-        .catch((error) => { console.error('fetchPurchaseOrder', error)})
+        .catch((error) => { console.error('fetchPurchaseOrder', error) })
     },
     acceptPurchaseOrder({ commit }, data) {
-      axios.put(`http://192.168.1.133:8001/api/internal/purchaseorders/${data}`, {
-        status: 'next'
-      })
+      axios.post('http://192.168.1.133:8003/api/saleorders/' + {
+          customer_id: data.id,
+          customer_sid: data.fabricator_sid,
+          stock_id : data.product_id,
+          purchase_order_sid: data.sid,
+          quantities : data.quantities
+    })
         .then(response => {
-          if (response.data.status === 'ok') { 
+          if (response.data.status === 'ok') {
+            axios.put(`http://192.168.1.133:8001/api/purchaseorders/${data}`, {
+              status: 'next'
+            })
             console.log('Jobwork has been accepted:', response.data.data)
             commit('updateOrderStatus', {
               index: data.poIndex,
@@ -122,7 +157,7 @@ export default createStore({
             alert('Something went wrong! Please try again')
           }
         })
-        .catch((error) => {console.error('acceptPurchaseOrder:', error)})
+        .catch((error) => { console.error('acceptPurchaseOrder:', error) })
     },
     updateSaleOrderStatus({ commit }, data) {
       axios
@@ -145,16 +180,29 @@ export default createStore({
         .catch((error) => { console.error('updateSaleOrderStatus:', error) })
     },
     fetchPurchases({ commit }) {
-      axios.get('http://192.168.1.133:8001/api/internal/purchases')
+      axios.get('http://192.168.1.133:8001/api/purchases')
         .then(response => {
-          if (response.data.status === 'ok') { 
+          if (response.data.status === 'ok') {
             commit('setPurchases', response.data.data)
           } else if (response.data.status === 'error') {
             alert(response.data.message)
-          } else{
+          } else {
             alert('Something went wrong! Please try again')
           }
         })
     },
+    fetchPurchase({ commit }, data) {
+      axios.get('http://192.168.1.133:8001/api/purchases/' + data)
+        .then(response => {
+          if (response.data.status === 'ok') {
+            commit('setPurchase', response.data.data);
+          } else if (response.data.status === 'error') {
+            alert(response.data.message)
+          } else {
+            alert('Something went wrong! Please try again')
+          }
+        })
+        .catch((error) => { console.error('error getting data', error) })
+    }
   },
 });
