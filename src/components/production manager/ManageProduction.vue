@@ -152,7 +152,7 @@ export default {
     mixins: [sweetAlert],
     data() {
         return {
-            jobworkId: '',
+            poId: '',
             form: {
                 assign: null,
                 exp_date: '',
@@ -197,8 +197,8 @@ export default {
         }
     },
     mounted() {
-        this.jobworkId = this.$route.params.jobworkId;
-        let url = 'http://192.168.1.133:8003/api/saleorder/' + this.jobworkId + '/F1';
+        this.poId = this.$route.params.poId;
+        let url = 'http://192.168.1.133:8003/api/saleorder/' + this.poId + '/F1';
         axios.get(url).then(response => {
             console.log(response.data.data);
             this.purchased = response.data.data;
@@ -206,7 +206,7 @@ export default {
             console.error('Error fetching data:', error);
         });
 
-        axios.get('http://192.168.1.133:8001/api/purchaseorders/message/' + this.jobworkId)
+        axios.get('http://192.168.1.133:8001/api/purchaseorders/message/' + this.poId)
             .then(res => {
                 // Convert the response data to a JSON string and log it
                 console.log('API Response:', JSON.stringify(res.data));

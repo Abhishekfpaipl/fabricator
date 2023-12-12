@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar border-bottom navbar-expand-lg" style="background-color: #25C297;">
         <div class="container-fluid">
-            <router-link to="/finishing-department" class="ps-1 pe-3 text-white">
+            <router-link to="/saleOrder/list" class="ps-1 pe-3 text-white">
                 <i class="bi bi-chevron-left"></i>
             </router-link>
             <div class="navbar-brand flex-fill d-flex align-items-center gap-2 text-white">

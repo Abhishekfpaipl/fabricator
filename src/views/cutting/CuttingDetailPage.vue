@@ -1,13 +1,13 @@
 <template>
     <nav class="navbar border-bottom navbar-expand-lg" style="background-color: #25C297;">
         <div class="container-fluid">
-            <router-link to="/cutting-department" class="ps-1 pe-3 text-white">
+            <router-link to="/cutting/list" class="ps-1 pe-3 text-white">
                 <i class="bi bi-chevron-left"></i>
             </router-link>
             <div class="navbar-brand flex-fill d-flex align-items-center gap-2 text-white">
                 <span>Cutting</span>
                 <i class="bi bi-arrow-right"></i>
-                <small>{{ this.jobworkId }}</small>
+                <small>{{ this.poId }}</small>
             </div>
         </div>
     </nav>
@@ -57,7 +57,7 @@ export default {
     data() {
         return {
             dataSet: {},
-            jobworkId: '',
+            poId: '',
             messages: [],
             chats: {},
             actionName: [],
@@ -68,14 +68,14 @@ export default {
         ManageProduction
     },
     created() {
-        this.jobworkId = this.$route.params.jobworkId;
-        axios.get('http://192.168.1.133:8001/api/purchaseorders/' + this.jobworkId).then(response => {
+        this.poId = this.$route.params.poId;
+        axios.get('http://192.168.1.133:8001/api/purchaseorders/' + this.poId).then(response => {
             this.dataSet = response.data.data;
             localStorage.setItem('po_quantity', response.data.data.quantity);
         })
     },
     mounted() {
-        axios.get('http://192.168.1.133:8001/api/purchaseorders/message/' + this.jobworkId)
+        axios.get('http://192.168.1.133:8001/api/purchaseorders/message/' + this.poId)
             .then(res => {
                 console.log('API Response:', JSON.stringify(res.data));
 

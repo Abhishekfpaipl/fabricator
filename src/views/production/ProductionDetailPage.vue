@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar border-bottom navbar-expand-lg" style="background-color: #25C297;">
         <div class="container-fluid">
-            <router-link to="/production-department" class="ps-1 pe-3 text-white">
+            <router-link to="/production/list" class="ps-1 pe-3 text-white">
                 <i class="bi bi-chevron-left"></i>
             </router-link>
             <div class="navbar-brand flex-fill d-flex align-items-center gap-2 text-white">
@@ -26,22 +26,6 @@
                     <div v-if="dataset.product" class="text-start">
                         <p class="ss mb-0">{{ dataset.product.name }} Long Gathered Sheer Cami Dress</p>
                     </div>
-                    <!-- <table class="table table-sm my-2">
-                        <tbody>
-                            <tr>
-                                <td class="table-warning w-25">Name</td>
-                                <td class="text-start">Value</td>
-                            </tr>
-                            <tr>
-                                <td class="table-warning w-25">Name</td>
-                                <td class="text-start">Value</td>
-                            </tr>
-                            <tr>
-                                <td class="table-warning w-25">Name</td>
-                                <td class="text-start">Value</td>
-                            </tr>
-                        </tbody>
-                    </table> -->
                 </div>
             </div>
         </div>
@@ -97,52 +81,11 @@
                 In</button>
             <button v-if="dataset.status === 'production'" class="btn top-brand w-50" @click="updateStatus"
                 :disabled="buttonDisabled">Finishing</button>
-            <!-- <button v-if="dataset.status === 'packing'" class="btn btn-dark" @click="updateStatus">Packing</button> -->
             <button v-if="dataset.status === 'ready'" class="btn top-brand w-100" disabled>Issued To Brand App</button>
             <button v-if="dataset.status === 'completed'" class="btn top-brand w-100" disabled>Order Completed</button>
         </div>
 
         <production-chat :dataset="dataset"></production-chat>
-
-        <!-- <div>
-            <div class="mt-3">
-                <div class="d-flex align-items-center">
-                    <div class="border p-2 py-3 ps-4 rounded-top  text-white w-100" style="background-color: #F48B29 ;"
-                        data-bs-toggle="collapse" data-bs-target="#collapseExampleNew" aria-expanded="false"
-                        aria-controls="collapseExampleNew">
-                        Chat
-                    </div>
-                </div>
-                <div class="collapse show p-2 border bg-light" id="collapseExampleNew">
-                    <div v-for="(message, index) in dataset.message" :key="index">
-                        <div class="message mt-3 mb-2  w-100 ">
-                            <div class="message-content border w-100 bg-white"
-                                style="word-wrap: break-word; padding: 10px !important; border-radius: 8px; border-top-right-radius: 15px; border-bottom-left-radius: 15px; border-bottom-right-radius: 0px !important; ">
-                                <small>
-                                    <small class="text-primary">@ {{ message.username }}</small>
-                                </small>
-                                <p class="mb-0">
-                                    <strong>{{ message.title }}</strong>: {{ message.body }}
-                                </p>
-                            </div>
-                            <div class="text-end text-muted" style="font-size: 10px;">{{ formatMessageTime(message.time) }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="pb-2 ">
-                <div class=" d-flex bg-light p-2 align-items-center">
-                    <input v-model="body" type="text" class="form-control" placeholder="Type your message..." required />
-                    <div @click="sendMessage" class="ms-2 "><i class="bi bi-telegram fs-1   p-3"
-                            style="color: #F48B29;"></i>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
-
     </div>
 </template>
 
@@ -156,7 +99,6 @@ export default {
     mixins: [pusherApi, sweetAlert],
     data() {
         return {
-            // dataset: {},
             purchaseId: '',
             messages: [],
             message: '',

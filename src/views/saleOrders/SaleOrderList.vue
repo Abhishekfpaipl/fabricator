@@ -5,7 +5,7 @@
             <div v-if="Object.keys(readyPo).length">
                 <div v-for="(po, poIndex) in readyPo" :key="poIndex">
                     <div v-if="po.status === 'ready'" class="px-3 py-2 border-bottom">
-                        <router-link class="text-decoration-none text-dark" :to="'/finishing-preview-page/' + po.sid">
+                        <router-link class="text-decoration-none text-dark" :to="'/saleOrder/preview-page/' + po.sid">
                             <div class="d-flex align-items-center">
                                 <img v-if="po.product" :src="po.product.colors[0].image" class="rounded-circle"
                                     style="height:60px;width:60px; object-fit: fill;">
@@ -26,7 +26,7 @@
                     <div v-if="po.status === 'requested'" class="px-3 py-2 border-bottom">
                         <div class="d-flex align-items-center">
                             <router-link class="flex-fill d-flex text-decoration-none text-dark"
-                                :to="'/finishing-preview-page/' + po.sid">
+                                :to="'/saleOrder/preview-page/' + po.sid">
                                 <img v-if="po.product" :src="po.product.colors[0].image" class="rounded-circle"
                                     style="height:60px;width:60px; object-fit: fill;">
                                 <div class="d-flex flex-fill flex-column ms-3">
@@ -46,7 +46,7 @@
             <div v-if="Object.keys(completedPo).length">
                 <div v-for="(po, poIndex) in completedPo" :key="poIndex">
                     <div v-if="po.status === 'completed'" class="px-3 py-2 border-bottom">
-                        <router-link class="text-decoration-none text-dark" :to="'/finishing-detail-page/' + po.sid">
+                        <router-link class="text-decoration-none text-dark" :to="'/saleOrder/detail-page/' + po.sid">
                             <div class="d-flex align-items-center">
                                 <img v-if="po.product" :src="po.product.colors[0].image" class="rounded-circle"
                                     style="height:60px;width:60px; object-fit: fill;">
@@ -65,7 +65,7 @@
             <div v-if="Object.keys(rejectedPo).length">
                 <div v-for="(po, poIndex) in rejectedPo" :key="poIndex">
                     <div v-if="po.status === 'rejected'" class="px-3 py-2 border-bottom ">
-                        <router-link class="text-decoration-none text-dark" :to="'/finishing-preview-page/' + po.sid">
+                        <router-link class="text-decoration-none text-dark" :to="'/saleOrder/preview-page/' + po.sid">
                             <div class="d-flex align-items-center">
                                 <img v-if="po.product" :src="po.product.colors[0].image" class="rounded-circle"
                                     style="height:60px;width:60px; object-fit: fill;">
@@ -93,8 +93,7 @@ export default {
     name: "FinishingPage",
     mixins: [pusherApi, sweetAlert],
     data() {
-        return {
-            // pos: [],
+        return { 
             statuses: ["requested", "dispatched", "completed"],
             buttonDisabled: false,
             hideButton : false

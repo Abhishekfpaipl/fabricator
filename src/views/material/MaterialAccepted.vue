@@ -5,7 +5,7 @@
         <div v-if="Object.keys(notProcuredPo).length">
             <div v-for="(po, poIndex) in notProcuredPo" :key="poIndex">
                 <div v-if="!po.procured" class="px-3 py-2 border-bottom">
-                    <router-link class="text-decoration-none text-dark" :to="'/fabric-procurement/' + po.sid">
+                    <router-link class="text-decoration-none text-dark" :to="'/material/procurement/' + po.sid">
                         <div class="d-flex align-items-center">
                             <img :src="po.colors[0].image" class="rounded-circle"
                                 style="height:60px;width:60px; object-fit: fill;">
@@ -24,7 +24,7 @@
         <div v-if="Object.keys(procuredPo).length">
             <div v-for="(po, poIndex) in procuredPo" :key="poIndex">
                 <div v-if="po.procured" class="px-3 py-2 border-bottom">
-                    <router-link class="text-decoration-none text-dark" :to="'/fabric-procurement/' + po.sid">
+                    <router-link class="text-decoration-none text-dark" :to="'/material/procurement/' + po.sid">
                         <div class="d-flex align-items-center">
                             <img :src="po.colors[0].image" class="rounded-circle"
                                 style="height:60px;width:60px; object-fit: fill;">
@@ -40,6 +40,7 @@
         <no-order v-else></no-order>
         <!-- </div>
         <no-order v-else></no-order> -->
+        <!-- <router-view></router-view> -->
     </div>
 </template>
 

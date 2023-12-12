@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex align-items-center p-2 " style="background-color: #25C297;">
-        <router-link to="/finishing-department" class="text-white">
+        <router-link to="/saleOrder/list" class="text-white">
             <i class="bi bi-chevron-left fs-4"></i>
         </router-link>
         <div class="flex-fill" data-bs-toggle="collapse" data-bs-target="#productDetail" aria-expanded="false"

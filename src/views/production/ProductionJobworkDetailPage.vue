@@ -2,7 +2,7 @@
     <div style="padding-bottom:80px ;">
         <nav class="navbar border-bottom navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid justify-content-start ">
-                <router-link to="/production-department" class="ps-1 pe-3 text-dark">
+                <router-link to="/production/list" class="ps-1 pe-3 text-dark">
                     <i class="bi bi-chevron-left"></i>
                 </router-link>
                 <div class="navbar-brand">{{ this.purchaseId }}</div>

@@ -5,7 +5,7 @@ const routes = [
   {
     path: "/",
     name: "RootPage",
-    component:()=>import('@/views/RootPage.vue'),
+    component: () => import('@/views/RootPage.vue'),
   },
   {
     path: "/dashboard",
@@ -14,55 +14,91 @@ const routes = [
     children: []
   },
   {
-    path: "/fabric-accepted",
-    name: "Material",
-    component: () => import('@/views/FabricPage.vue'),
+    path: "/material",
+    children: [
+      {
+        path: "accepted",
+        name: "MaterialAccepted",
+        component: () => import('@/views//material/MaterialAccepted.vue'),
+      },
+      {
+        path: "procurement/:poId",
+        name: "MaterialProcurement",
+        component: () => import('@/views/material/MaterialProcurement.vue'),
+      }
+    ]
   },
   {
-    path: "/fabric-procurement/:jobworkId",
-    name: "Material Procurement",
-    component: () => import('@/views/FabricProcurement.vue'),
+    path: "/cutting",
+    children: [
+      {
+        path: "list",
+        name: "CuttingList",
+        component: () => import('@/views/cutting/CuttingList.vue'),
+      },
+      {
+        path: "detail/:poId",
+        name: "CuttingDetail",
+        component: () => import('@/views/cutting/CuttingDetailPage.vue')
+      },
+
+    ]
   },
   {
-    path: "/cutting-department",
-    name: "Cutting",
-    component: () => import('@/views/CuttingPage.vue'),
+    path: "/production",
+    children: [
+      {
+        path: "list",
+        name: "ProductionList",
+        component: () => import('@/views/production/ProductionList.vue'),
+      },
+      {
+        path: "detail/:purchaseId",
+        name: "ProductionDetail",
+        component: () => import('@/views/production/ProductionDetailPage.vue'),
+      },
+      {
+        path: "jobwork/:purchaseId",
+        name: "ProductionJobworkDetail",
+        component: () => import('@/views/production/ProductionJobworkDetailPage.vue'),
+      },
+    ]
   },
   {
-    path: "/ptocPage/:jobworkId",
-    name: "Purchase To Cutting",
-    component: () => import('@/views/PurchaseToCuttingPage.vue')
+    path: "/saleOrder",
+    children: [
+      {
+        path: "list",
+        name: "SaleOrderList",
+        component: () => import('@/views/saleOrders/SaleOrderList.vue'),
+      },
+      {
+        path: "detail-page/:purchaseId",
+        name: "SaleOrderDetail",
+        component: () => import('@/views/saleOrders/SaleOrderDetail.vue'),
+      },
+      {
+        path: "preview-page/:purchaseId",
+        name: "SaleOrderPreview",
+        component: () => import('@/views/saleOrders/SaleOrderPreviewPage.vue'),
+      },
+    ]
   },
-  {
-    path: "/production-department",
-    name: "Production",
-    component: () => import('@/views/ProductionPage.vue'),
-  },
-  {
-    path: "/production-detail/:purchaseId",
-    name: "Production Detail",
-    component: () => import('@/views/ProductionDetailPage.vue'),
-  },
-  {
-    path: "/production-jobwork/:purchaseId",
-    name: "Production Jobwork Detail",
-    component: () => import('@/views/ProductionJobworkDetailPage.vue'),
-  },
-  {
-    path: "/finishing-department",
-    name: "Sale Orders",
-    component: () => import('@/views/FinishingPage.vue'),
-  },
-  {
-    path: "/finishing-detail-page/:purchaseId",
-    name: "Finishing Detail",
-    component: () => import('@/views/FinishingDetailPage.vue'),
-  },
-  {
-    path: "/finishing-preview-page/:purchaseId",
-    name: "Finishing Preview",
-    component: () => import('@/views/FinishingPreviewPage.vue'),
-  },
+  // {
+  //   path: "/finishing-department",
+  //   name: "Sale Orders",
+  //   component: () => import('@/views/FinishingPage.vue'),
+  // },
+  // {
+  //   path: "/finishing-detail-page/:purchaseId",
+  //   name: "Finishing Detail",
+  //   component: () => import('@/views/FinishingDetailPage.vue'),
+  // },
+  // {
+  //   path: "/finishing-preview-page/:purchaseId",
+  //   name: "Finishing Preview",
+  //   component: () => import('@/views/FinishingPreviewPage.vue'),
+  // },
   {
     path: "/profile",
     name: "Profile Page",

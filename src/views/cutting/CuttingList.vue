@@ -2,7 +2,7 @@
     <div v-if="Object.keys(pos).length">
         <div v-for="(po, poIndex) in pos" :key="poIndex">
             <div v-if="!po.purchased && po.procured" class="px-3 py-2 border-bottom">
-                <router-link class="text-decoration-none text-dark" :to="'/ptocPage/' + po.sid">
+                <router-link class="text-decoration-none text-dark" :to="'/cutting/detail/' + po.sid">
                     <div class="d-flex align-items-center">
                         <img :src="po.colors[0].image" class="rounded-circle"
                             style="height:60px;width:60px; object-fit: fill;">

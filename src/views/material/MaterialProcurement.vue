@@ -1,13 +1,13 @@
 <template>
     <nav class="navbar border-bottom navbar-expand-lg" style="background-color: #25C297;">
         <div class="container-fluid">
-            <router-link to="/fabric-accepted" class="ps-1 pe-3 text-white">
+            <router-link to="/material/accepted" class="ps-1 pe-3 text-white">
                 <i class="bi bi-chevron-left"></i>
             </router-link>
             <div class="navbar-brand flex-fill d-flex align-items-center gap-2 text-white">
                 <span>Material</span>
                 <i class="bi bi-arrow-right"></i>
-                <small>{{ this.jobworkId }}</small>
+                <small>{{ this.poId }}</small>
             </div>
         </div>
     </nav>
@@ -87,7 +87,7 @@
         <button v-if="sos.length && sos[0].pending === 'pending' && !hideButton" class="btn top-brand w-100"
             @click="acceptFabric" :disabled="buttonDisabled">Record
             Fabric Purchase</button>
-    </div>
+    </div> 
 </template>
 
 <script>
@@ -98,7 +98,7 @@ export default {
     data() {
         return {
             dataSet: {},
-            jobworkId: '',
+            poId: '',
             isExpanded: false,
             isExpandedOrder: false,
             buttonDisabled: false,
@@ -117,8 +117,8 @@ export default {
         }
     },
     mounted() {
-        this.jobworkId = this.$route.params.jobworkId;
-        axios.get('http://192.168.1.133:8001/api/purchaseorders/' + this.jobworkId).then(response => {
+        this.poId = this.$route.params.poId;
+        axios.get('http://192.168.1.133:8001/api/purchaseorders/' + this.poId).then(response => {
             this.dataSet = response.data.data;
         })
             .catch(error => {
@@ -164,18 +164,18 @@ export default {
            this.buttonDisabled = true;
             let so_sids = this.sos.map(so => so.sid);
             axios.post('http://192.168.1.133:8003/api/sales', {
-                po_sid: this.$route.params.jobworkId,
+                po_sid: this.$route.params.poId,
             })
                 .then(response => {
                     if (response.data.status === 'ok') {
                         console.log(so_sids)
                         axios.post(`http://192.168.1.133:8002/api/purchases`, {
-                            po_sid: this.$route.params.jobworkId,
+                            po_sid: this.$route.params.poId,
                             so_sids: JSON.stringify(so_sids)
                         })
                             .then(response => {
                                 if (response.data.status === 'ok') {
-                                    axios.put('http://192.168.1.133:8001/api/purchaseorders/' + this.jobworkId, {
+                                    axios.put('http://192.168.1.133:8001/api/purchaseorders/' + this.poId, {
                                         status: 'next'
                                     }).then(response => {
                                         console.log('status changed', response.data);

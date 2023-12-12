@@ -203,6 +203,6 @@ export default createStore({
           }
         })
         .catch((error) => { console.error('error getting data', error) })
-    }
+    },
   },
 });
